@@ -49,6 +49,11 @@ if(!process.env.GOOGLE_USER){
     process.exit(1);
 }
 
+if(!process.env.BASE_URL){
+    console.log("GOOGLE_USER is not defined in environment variables");
+    process.exit(1);
+}
+
 const config = {
     PORT: process.env.PORT,
     MONGO_URI: process.env.MONGO_URI,
@@ -61,6 +66,7 @@ const config = {
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
     GOOGLE_USER: process.env.GOOGLE_USER,
+    BASE_URL: process.env.BASE_URL
 }
 
 export default config;
