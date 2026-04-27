@@ -1,0 +1,66 @@
+import dotenv from 'dotenv'
+dotenv.config();
+
+if(!process.env.PORT){
+    console.log("PORT is not defined in env variables");
+}
+
+if(!process.env.MONGO_URI){
+    console.log("MONGO_URI is not defined in env variables");
+}
+
+if(!process.env.REFRESH_JWT_SECRET){
+    console.log("REFRESH_JWT_SECRET is not defined in env variables");
+}
+
+if(!process.env.ACCESS_JWT_SECRET){
+    console.log("ACCESS_JWT_SECRET is not defined in env variables");
+}
+
+if(!process.env.IMAGEKIT_PUBLIC_KEY){
+    console.log("IMAGEKIT_PUBLIC_KEY is not defined in env variables");
+}
+
+if(!process.env.IMAGEKIT_PRIVATE_KEY){
+    console.log("IMAGEKIT_PRIVATE_KEY is not defined in env variables");
+}
+
+if(!process.env.IMAGEKIT_URL_ENDPOINT){
+    console.log("IMAGEKIT_URL_ENDPOINT is not defined in env variables");
+}
+
+if(!process.env.GOOGLE_CLIENT_ID){
+    console.log("GOOGLE_CLIENT_ID is not defined in environment variables");
+    process.exit(1);
+}
+
+if(!process.env.GOOGLE_CLIENT_SECRET){
+    console.log("GOOGLE_CLIENT_SECRET is not defined in environment variables");
+    process.exit(1);
+}
+
+if(!process.env.GOOGLE_REFRESH_TOKEN){
+    console.log("GOOGLE_REFRESH_TOKEN is not defined in environment variables");
+    process.exit(1);
+}
+
+if(!process.env.GOOGLE_USER){
+    console.log("GOOGLE_USER is not defined in environment variables");
+    process.exit(1);
+}
+
+const config = {
+    PORT: process.env.PORT,
+    MONGO_URI: process.env.MONGO_URI,
+    REFRESH_JWT_SECRET: process.env.REFRESH_JWT_SECRET,
+    ACCESS_JWT_SECRET: process.env.ACCESS_JWT_SECRET,
+    IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
+    IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
+    IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
+    GOOGLE_USER: process.env.GOOGLE_USER,
+}
+
+export default config;
