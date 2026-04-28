@@ -46,28 +46,18 @@ export const registerUser = async (req, res) => {
         const html = getOtpHtml(otp);
         const otpHash = hash(otp);
 
-        let otpDoc;
-        try {
-            otpDoc = await otpModel.create({
-                entityId: user._id,
-                entityType: "user",
-                otpHash
-            });
+        await otpModel.create({
+            entityId: user._id,
+            entityType: "user",
+            otpHash
+        })
 
-            await sendEmail(
-                user.email,
-                "OTP Verification",
-                `Your OTP is ${otp}`,
-                html
-            );
-        } catch (error) {
-            if (otpDoc) {
-                await otpDoc.deleteOne().catch(() => {});
-            }
-            await user.deleteOne().catch(() => {});
-            console.error('Registration email failed, deleted user:', error);
-            return res.status(500).json({ message: error.message || "Failed to send OTP email" });
-        }
+        await sendEmail(
+            user.email,
+            "OTP Verification",
+            `Your OTP is ${otp}`,
+            html
+        );
 
         return res.status(201).json({
             message: "OTP sent to email",
@@ -196,28 +186,18 @@ export const registerFoodPartner = async (req, res) => {
         const html = getOtpHtml(otp);
         const otpHash = hash(otp);
 
-        let otpDoc;
-        try {
-            otpDoc = await otpModel.create({
-                entityId: foodPartner._id,
-                entityType: "foodPartner",
-                otpHash
-            });
+        await otpModel.create({
+            entityId: foodPartner._id,
+            entityType: "foodPartner",
+            otpHash
+        })
 
-            await sendEmail(
-                foodPartner.email,
-                "OTP Verification",
-                `Your OTP is ${otp}`,
-                html
-            );
-        } catch (error) {
-            if (otpDoc) {
-                await otpDoc.deleteOne().catch(() => {});
-            }
-            await foodPartner.deleteOne().catch(() => {});
-            console.error('Food partner registration email failed, deleted account:', error);
-            return res.status(500).json({ message: error.message || "Failed to send OTP email" });
-        }
+        await sendEmail(
+            foodPartner.email,
+            "OTP Verification",
+            `Your OTP is ${otp}`,
+            html
+        );
 
         return res.status(201).json({
             message: "OTP sent to email",
@@ -491,45 +471,24 @@ export const resendOtp = async (req, res) => {
         const html = getOtpHtml(otp);
         const otpHash = hash(otp);
 
-        let otpDoc = existingOtp;
-        let createdNewOtp = false;
-        let originalOtpHash;
-        let originalCreatedAt;
-
         if (existingOtp) {
-            originalOtpHash = existingOtp.otpHash;
-            originalCreatedAt = existingOtp.createdAt;
             existingOtp.otpHash = otpHash;
             existingOtp.createdAt = new Date();
+            await existingOtp.save();
         } else {
-            otpDoc = new otpModel({
+            await otpModel.create({
                 entityId: account._id,
                 entityType: type,
                 otpHash
             });
-            createdNewOtp = true;
         }
 
-        try {
-            await sendEmail(
-                account.email,
-                "OTP Verification",
-                `Your OTP is ${otp}`,
-                html
-            );
-
-            await otpDoc.save();
-        } catch (error) {
-            if (createdNewOtp && otpDoc) {
-                await otpDoc.deleteOne().catch(() => {});
-            }
-            if (!createdNewOtp && existingOtp) {
-                existingOtp.otpHash = originalOtpHash;
-                existingOtp.createdAt = originalCreatedAt;
-                await existingOtp.save().catch(() => {});
-            }
-            throw error;
-        }
+        await sendEmail(
+            account.email,
+            "OTP Verification",
+            `Your OTP is ${otp}`,
+            html
+        );
 
         return res.status(200).json({
             message: "OTP resent to email",
