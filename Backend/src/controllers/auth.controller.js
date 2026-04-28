@@ -64,7 +64,9 @@ export const registerUser = async (req, res) => {
             if (otpDoc) {
                 await otpDoc.deleteOne().catch(() => {});
             }
-            throw error;
+            await user.deleteOne().catch(() => {});
+            console.error('Registration email failed, deleted user:', error);
+            return res.status(500).json({ message: error.message || "Failed to send OTP email" });
         }
 
         return res.status(201).json({
@@ -212,7 +214,9 @@ export const registerFoodPartner = async (req, res) => {
             if (otpDoc) {
                 await otpDoc.deleteOne().catch(() => {});
             }
-            throw error;
+            await foodPartner.deleteOne().catch(() => {});
+            console.error('Food partner registration email failed, deleted account:', error);
+            return res.status(500).json({ message: error.message || "Failed to send OTP email" });
         }
 
         return res.status(201).json({
