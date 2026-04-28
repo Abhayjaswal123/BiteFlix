@@ -11,10 +11,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initUser = async () => {
       try {
-        const res = await api.post("/auth/refresh-token");
+        const res = await api.post("/api/auth/refresh-token");
         setAccessToken(res.data.accessToken);
 
-        const userRes = await api.get("/auth/me");
+        const userRes = await api.get("/api/auth/me");
         setUser(userRes.data.user);
       } catch {
         clearAccessToken();

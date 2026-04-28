@@ -10,15 +10,15 @@ import { generateOtp, getOtpHtml } from '../utils/genrate.otp.js'
 
 const refreshCookieOptions = {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000
 };
 
 const clearCookieOptions = {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax"
+    secure: true,
+    sameSite: "none"
 };
 
 export const registerUser = async (req, res) => {

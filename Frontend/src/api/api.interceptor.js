@@ -35,8 +35,8 @@ api.interceptors.response.use(
         }
 
         if (
-            originalRequest.url?.includes('/auth/refresh-token') ||
-            originalRequest.url?.includes('/auth/logout')
+            originalRequest.url?.includes('/api/auth/refresh-token') ||
+            originalRequest.url?.includes('/api/auth/logout')
         ) {
             return Promise.reject(error);
         }
@@ -44,7 +44,7 @@ api.interceptors.response.use(
         originalRequest._retry = true;
 
         try {
-            const res = await api.post("/auth/refresh-token");
+            const res = await api.post("/api/auth/refresh-token");
             const newAccessToken = res.data.accessToken
             setAccessToken(newAccessToken);
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`

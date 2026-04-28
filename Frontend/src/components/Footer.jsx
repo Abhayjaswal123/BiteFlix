@@ -1,6 +1,7 @@
 import React from "react";
 
 const Footer = () => {
+
   return (
     <footer className="bg-[#1B1B1E] text-[#F2E9E4] border-t border-[#5C3D2E]/40 mt-16">
       <div className="max-w-6xl mx-auto px-6 md:px-16 py-10">
