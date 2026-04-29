@@ -52,7 +52,7 @@ export const registerUser = async (req, res) => {
             otpHash
         })
 
-        await sendEmail(
+        sendEmail(
             user.email,
             "OTP Verification",
             `Your OTP is ${otp}`,
@@ -192,12 +192,12 @@ export const registerFoodPartner = async (req, res) => {
             otpHash
         })
 
-        await sendEmail(
+        sendEmail(
             foodPartner.email,
             "OTP Verification",
             `Your OTP is ${otp}`,
             html
-        );
+        ).catch(err => console.log("Email error:", err));
 
         return res.status(201).json({
             message: "OTP sent to email",
