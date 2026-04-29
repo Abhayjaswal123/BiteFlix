@@ -2,24 +2,26 @@ import nodemailer from 'nodemailer';
 import config from '../config/config.js'
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        // type: 'OAuth2',
-        user: config.GOOGLE_USER,
-        pass: config.GMAIL_PASSWORD
-        // clientId: config.GOOGLE_CLIENT_ID,
-        // clientSecret: config.GOOGLE_CLIENT_SECRET,
-        // refreshToken: config.GOOGLE_REFRESH_TOKEN
-    },
-    connectionTimeout: 10000 
-}) 
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    // type: 'OAuth2',
+    user: config.GOOGLE_USER,
+    pass: config.GMAIL_PASSWORD
+    // clientId: config.GOOGLE_CLIENT_ID,
+    // clientSecret: config.GOOGLE_CLIENT_SECRET,
+    // refreshToken: config.GOOGLE_REFRESH_TOKEN
+  },
+  connectionTimeout: 10000
+})
 
 transporter.verify((error, success) => {
-    if(error){
-        console.log('Error setting up email transporter', error);
-    } else {
-        console.log('Email transporter is ready');
-    }
+  if (error) {
+    console.log('Error setting up email transporter', error);
+  } else {
+    console.log('Email transporter is ready');
+  }
 })
 
 
