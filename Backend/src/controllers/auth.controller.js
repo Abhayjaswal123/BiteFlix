@@ -7,16 +7,16 @@ import { refreshTokenFunction, accessTokenFunction, hash } from '../utils/genrat
 import config from "../config/config.js";
 import { sendEmail } from "../services/email.service.js";
 import { generateOtp, getOtpHtml } from '../utils/genrate.otp.js'
-
+ 
 const refreshCookieOptions = {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000
 };
 
 const clearCookieOptions = {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     sameSite: "none"
 };
