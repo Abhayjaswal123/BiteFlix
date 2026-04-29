@@ -29,8 +29,17 @@ if(!process.env.IMAGEKIT_URL_ENDPOINT){
     console.log("IMAGEKIT_URL_ENDPOINT is not defined in env variables");
 }
 
-const usingOAuth = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN);
-const usingPassword = Boolean(process.env.GMAIL_PASSWORD);
+if(!process.env.GOOGLE_CLIENT_ID){
+    console.log("IMAGEKIT_URL_ENDPOINT is not defined in env variables");
+}
+
+if(!process.env.GOOGLE_CLIENT_SECRET){
+    console.log("IMAGEKIT_URL_ENDPOINT is not defined in env variables");
+}
+
+if(!process.env.GOOGLE_REFRESH_TOKEN){
+    console.log("IMAGEKIT_URL_ENDPOINT is not defined in env variables");
+}
 
 if (!process.env.GOOGLE_USER) {
     console.log("GOOGLE_USER is not defined in environment variables");
@@ -39,11 +48,6 @@ if (!process.env.GOOGLE_USER) {
 
 if (!process.env.BASE_URL) {
     console.log("BASE_URL is not defined in environment variables");
-    process.exit(1);
-}
-
-if (!usingOAuth && !usingPassword) {
-    console.log("Email configuration is incomplete: provide either Gmail OAuth2 vars or GMAIL_PASSWORD");
     process.exit(1);
 }
 
@@ -59,7 +63,6 @@ const config = {
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
     GOOGLE_USER: process.env.GOOGLE_USER,
-    GMAIL_PASSWORD: process.env.GMAIL_PASSWORD,
     BASE_URL: process.env.BASE_URL
 }
 
