@@ -17,13 +17,15 @@ const FoodDetail = () => {
     const canAddToCart = user?.userType === "user" && user?.isVerified;
 
     useEffect(() => {
-        setLoading(true);
         const fetchFood = async () => {
             try {
+                setLoading(true);
                 const res = await getSingleFood(id);
                 setFood(res.food);
             } catch (err) {
                 console.error(err);
+            } finally {
+                setLoading(false);
             }
         };
 
