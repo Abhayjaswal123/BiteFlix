@@ -9,14 +9,14 @@ import { sendEmail } from "../services/email.service.js";
 import { generateOtp, getOtpHtml } from '../utils/genrate.otp.js'
  
 const refreshCookieOptions = {
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000
 };
 
 const clearCookieOptions = {
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     sameSite: "none"
 };
@@ -57,7 +57,7 @@ export const registerUser = async (req, res) => {
             "OTP Verification",
             `Your OTP is ${otp}`,
             html
-        );
+        ).catch(err => console.log("Email error:", err));
 
         return res.status(201).json({
             message: "OTP sent to email",
@@ -137,8 +137,8 @@ export const logoutUser = async (req, res) => {
             revoked: false
         })
         if (!session) {
-            return res.status(404).json({
-                message: "session not found"
+            return res.status(401).json({
+                message: "Unauthorized"
             })
         }
 
@@ -371,8 +371,8 @@ export const verifyEmail = async (req, res) => {
         }
 
         const Model = type === "user" ? userModel : foodPartnerModel;
-
-        const account = await Model.findOne({ email });
+        const normalizedEmail = String(email || "").trim().toLowerCase();
+        const account = await Model.findOne({ email: normalizedEmail });
 
         if (!account) {
             return res.status(404).json({
