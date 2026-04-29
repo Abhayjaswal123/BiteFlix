@@ -92,7 +92,7 @@ const OtpVerify = () => {
       setSuccess("OTP resent to your email");
       setResendTimer(120);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to resend OTP");
+      setError("Failed to sent OTP");
     } finally {
       setResendLoading(false);
     }
@@ -176,6 +176,7 @@ const OtpVerify = () => {
         </button>
 
         {/* Resend Button */}
+        {user && (
         <button
           onClick={handleResendOtp}
           disabled={resendLoading || resendTimer > 0}
@@ -183,7 +184,7 @@ const OtpVerify = () => {
         >
           {resendLoading ? "Resending..." : resendTimer > 0 ? `Resend in ${Math.floor(resendTimer / 60)}:${(resendTimer % 60).toString().padStart(2, '0')}` : "Resend OTP"}
         </button>
-
+        )}
       </div>
     </div>
   );
