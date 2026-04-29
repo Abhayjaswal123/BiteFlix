@@ -75,6 +75,17 @@ const Feed = () => {
       </div>
 
       {/* FOOD GRID */}
+      {loading && (
+        <div className="flex justify-center py-12">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-[#C9A66B]"></div>
+            <p className="text-gray-400 mt-4">Loading food items...</p>
+          </div>
+        </div>
+      )}
+
+      {error && <p className="text-red-400 text-center mb-6">{error}</p>}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
         {/* CARD */}

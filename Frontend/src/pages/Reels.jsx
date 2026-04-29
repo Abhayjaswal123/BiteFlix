@@ -73,8 +73,15 @@ const Reels = () => {
       {/* CENTERED CONTAINER */}
       <div className="max-w-7xl mx-auto px-6 md:px-10">
 
-        {loading && <p className="text-[#C9A66B] mb-4">Loading reels...</p>}
-        {error && <p className="text-red-400 mb-4">{error}</p>}
+        {loading && (
+          <div className="flex justify-center items-center h-96">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-[#C9A66B]"></div>
+              <p className="text-gray-400 mt-4">Loading reels...</p>
+            </div>
+          </div>
+        )}
+        {error && <p className="text-red-400 text-center mb-4">{error}</p>}
 
         {/* 🎯 MAIN REEL WRAPPER */}
         <div className="flex justify-center">

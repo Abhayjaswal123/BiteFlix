@@ -17,6 +17,7 @@ const FoodDetail = () => {
     const canAddToCart = user?.userType === "user" && user?.isVerified;
 
     useEffect(() => {
+        setLoading(true);
         const fetchFood = async () => {
             try {
                 const res = await getSingleFood(id);
@@ -56,10 +57,25 @@ const FoodDetail = () => {
     }
 }, [error, success]);
 
-    if (!food) return <p className="text-white">Loading...</p>;
+    if (!food) return (
+        <div className="min-h-screen bg-[#0F0F10] text-white flex items-center justify-center">
+            <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-[#C9A66B]"></div>
+                <p className="text-gray-400 mt-4">Loading content...</p>
+            </div>
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-[#0F0F10] text-white">
+            {loading &&(
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="text-center">
+                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-700 border-t-[#C9A66B]"></div>
+                        <p className="text-gray-300 mt-4">Loading content...</p>
+                    </div>
+                </div>
+            )}
 
             <div className="p-4">
                 <button
@@ -127,11 +143,7 @@ const FoodDetail = () => {
 
                 {error && <p className="text-red-500 mt-2">{error}</p>}
                 {success && <p className="text-green-500 mt-2">{success}</p>}
-                {user && !user.isVerified && user.userType === "user" && (
-                  <p className="text-yellow-300 mt-2 text-sm">
-                    Your email is not verified yet. Verify your email to use cart and full customer features.
-                  </p>
-                )}
+
                 {/* EXTRA INFO CARDS */}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-10">
 
