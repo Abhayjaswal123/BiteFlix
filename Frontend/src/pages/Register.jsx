@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import { registerFoodPartner, registerUser } from "../api/api.auth";
 
 const Register = () => {
     const [role, setRole] = useState("user");
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -113,11 +115,8 @@ const Register = () => {
 
             const res = await apiCall(payload);
 
-            if (res?.otpSent) {
-                navigate("/verify-otp", {
-                    state: { email: form.email, role }
-                });
-            }
+            login(res);
+            navigate("/feed");
 
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");

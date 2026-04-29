@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, registerUser, verifyEmail, logoutUser, registerFoodPartner, loginFoodPartner, logoutFoodPartner, refreshToken, resendOtp } from '../controllers/auth.controller.js';
+import { loginUser, registerUser, logoutUser, registerFoodPartner, loginFoodPartner, logoutFoodPartner, refreshToken } from '../controllers/auth.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const authRouter = express.Router();
@@ -25,10 +25,7 @@ authRouter.get('/me', authMiddleware, (req, res) => {
     }
     const { password, ...userData } = account.toObject();
     const userType = req.user ? "user" : "foodPartner";
-    res.status(200).json({ user: { ...userData, userType } });
+    res.status(200).json({ user: { ...userData, userType, isVerified: true } });
 })
-//verify email
-authRouter.post("/verify-email", verifyEmail)
-authRouter.post("/resend-otp",authMiddleware, resendOtp)
 
 export default authRouter;

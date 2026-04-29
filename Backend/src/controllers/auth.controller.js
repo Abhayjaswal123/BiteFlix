@@ -1,13 +1,10 @@
 import userModel from "../models/user.model.js";
 import bcrypt from 'bcrypt'
-import otpModel from '../models/otp.model.js'
 import sessionModel from '../models/session.model.js'
 import foodPartnerModel from "../models/foodpartner.model.js";
 import { refreshTokenFunction, accessTokenFunction, hash } from '../utils/genrate.token.js'
 import config from "../config/config.js";
-import { sendEmail } from "../services/email.service.js";
-import { generateOtp, getOtpHtml } from '../utils/genrate.otp.js'
- 
+
 const refreshCookieOptions = {
     httpOnly: true,
     secure: true,
@@ -39,30 +36,34 @@ export const registerUser = async (req, res) => {
         const user = await userModel.create({
             name,
             email: normalizedEmail,
-            password: hashedPassword
+            password: hashedPassword,
+            isVerified: true
         })
 
-        const otp = generateOtp();
-        const html = getOtpHtml(otp);
-        const otpHash = hash(otp);
+        const refreshToken = refreshTokenFunction(user, "user");
+        const refreshTokenHash = hash(refreshToken);
 
-        await otpModel.create({
-            entityId: user._id,
-            entityType: "user",
-            otpHash
+        const session = await sessionModel.create({
+            user: user._id,
+            refreshTokenHash,
+            userType: "user",
+            ip: req.ip,
+            userAgent: req.headers["user-agent"]
         })
 
-        sendEmail(
-            user.email,
-            "OTP Verification",
-            `Your OTP is ${otp}`,
-            html
-        ).catch(err => console.log("Email error:", err));
+        const accessToken = accessTokenFunction(user, session);
+        res.cookie('refreshToken', refreshToken, refreshCookieOptions);
 
         return res.status(201).json({
-            message: "OTP sent to email",
-            otpSent: true,
-            email: user.email,
+            message: "User registered successfully",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                isVerified: true,
+                userType: "user"
+            },
+            accessToken
         });
 
     } catch (err) {
@@ -110,7 +111,7 @@ export const loginUser = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                isVerified: user.isVerified,
+                isVerified: true,
                 userType: "user"
             },
             accessToken
@@ -179,30 +180,36 @@ export const registerFoodPartner = async (req, res) => {
             email: normalizedEmail,
             password: hashedPassword,
             phoneNumber,
-            restaurantName
+            restaurantName,
+            isVerified: true
         });
 
-        const otp = generateOtp();
-        const html = getOtpHtml(otp);
-        const otpHash = hash(otp);
+        const refreshToken = refreshTokenFunction(foodPartner, "foodPartner");
+        const refreshTokenHash = hash(refreshToken);
 
-        await otpModel.create({
-            entityId: foodPartner._id,
-            entityType: "foodPartner",
-            otpHash
+        const session = await sessionModel.create({
+            user: foodPartner._id,
+            refreshTokenHash,
+            userType: "foodPartner",
+            ip: req.ip,
+            userAgent: req.headers["user-agent"]
         })
 
-        sendEmail(
-            foodPartner.email,
-            "OTP Verification",
-            `Your OTP is ${otp}`,
-            html
-        ).catch(err => console.log("Email error:", err));
+        const accessToken = accessTokenFunction(foodPartner, session);
+        res.cookie('refreshToken', refreshToken, refreshCookieOptions);
 
         return res.status(201).json({
-            message: "OTP sent to email",
-            otpSent: true,
-            email: foodPartner.email
+            message: "Food partner registered successfully",
+            user: {
+                id: foodPartner._id,
+                name: foodPartner.name,
+                email: foodPartner.email,
+                isVerified: true,
+                restaurantName: foodPartner.restaurantName,
+                phoneNumber: foodPartner.phoneNumber,
+                userType: "foodPartner"
+            },
+            accessToken
         });
 
     } catch (err) {
@@ -250,7 +257,7 @@ export const loginFoodPartner = async (req, res) => {
                 id: foodPartner._id,
                 name: foodPartner.name,
                 email: foodPartner.email,
-                isVerified: foodPartner.isVerified,
+                isVerified: true,
                 restaurantName: foodPartner.restaurantName,
                 phoneNumber: foodPartner.phoneNumber,
                 userType: "foodPartner"
@@ -355,148 +362,6 @@ export const refreshToken = async (req, res) => {
 
 
     } catch {
-        return res.status(500).json({
-            message: "Internal Server Error"
-        });
-    }
-}
-
-export const verifyEmail = async (req, res) => {
-    try {
-        const { email, otp, type } = req.body;
-        if (!["user", "foodPartner"].includes(type)) {
-            return res.status(400).json({
-                message: "Invalid type"
-            });
-        }
-
-        const Model = type === "user" ? userModel : foodPartnerModel;
-        const normalizedEmail = String(email || "").trim().toLowerCase();
-        const account = await Model.findOne({ email: normalizedEmail });
-
-        if (!account) {
-            return res.status(404).json({
-                message: `${type} not found`
-            });
-        }
-        const otpDoc = await otpModel.findOne({
-            entityId: account._id,
-            entityType: type,
-        });
-
-        if (!otpDoc) {
-            return res.status(400).json({
-                message: "OTP expired or not found"
-            });
-        }
-        const hashedOtp = hash(otp);
-
-        if (hashedOtp !== otpDoc.otpHash) {
-            return res.status(400).json({
-                message: "Invalid OTP"
-            });
-        }
-
-        account.isVerified = true;
-        await account.save();
-        await otpDoc.deleteOne();
-
-        const refreshToken = refreshTokenFunction(account, type);
-        const refreshTokenHash = hash(refreshToken);
-
-        const session = await sessionModel.create({
-            user: account._id,
-            refreshTokenHash,
-            userType: type,
-            ip: req.ip,
-            userAgent: req.headers["user-agent"]
-        })
-
-        const accessToken = accessTokenFunction(account, session);
-        res.cookie('refreshToken', refreshToken, refreshCookieOptions);
-
-        const name = account.name;
-
-        return res.status(201).json({
-            message: "user verified successfully",
-            user: {
-                id: account._id,
-                name,
-                email: account.email,
-                userType: type,
-                isVerified: account.isVerified
-            },
-            accessToken
-        })
-
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({
-            message: "Internal Server Error"
-        });
-    }
-}
-
-export const resendOtp = async (req, res) => {
-    try {
-        const { email, type } = req.body;
-        if (!["user", "foodPartner"].includes(type)) {
-            return res.status(400).json({
-                message: "Invalid type"
-            });
-        }
-
-        const Model = type === "user" ? userModel : foodPartnerModel;
-
-        const account = await Model.findOne({ email });
-
-        if (!account) {
-            return res.status(404).json({
-                message: `${type} not found`
-            });
-        }
-
-        const existingOtp = await otpModel.findOne({
-            entityId: account._id,
-            entityType: type,
-        });
-
-        if (existingOtp && (Date.now() - existingOtp.createdAt.getTime()) < 2 * 60 * 1000) {
-            return res.status(429).json({
-                message: "Please wait 2 minutes before resending OTP"
-            });
-        }
-
-        const otp = generateOtp();
-        const html = getOtpHtml(otp);
-        const otpHash = hash(otp);
-
-        if (existingOtp) {
-            existingOtp.otpHash = otpHash;
-            existingOtp.createdAt = new Date();
-            await existingOtp.save();
-        } else {
-            await otpModel.create({
-                entityId: account._id,
-                entityType: type,
-                otpHash
-            });
-        }
-
-        await sendEmail(
-            account.email,
-            "OTP Verification",
-            `Your OTP is ${otp}`,
-            html
-        );
-
-        return res.status(200).json({
-            message: "OTP resent to email",
-            otpSent: true
-        });
-
-    } catch (err) {
-        console.log(err);
         return res.status(500).json({
             message: "Internal Server Error"
         });

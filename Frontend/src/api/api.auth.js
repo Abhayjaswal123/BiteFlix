@@ -29,13 +29,3 @@ export const logoutFoodPartner = async() => {
     const res = await api.post("/api/auth/food-partner/logout");
     return res.data;
 }
-
-export const verifyOtp = async (data) => {
-    const res = await api.post("/api/auth/verify-email", data);
-    return res.data;
-}
-
-export const resendOtp = async (data) => {
-    const res = await api.post("/api/auth/resend-otp", data);
-    return res.data;
-}

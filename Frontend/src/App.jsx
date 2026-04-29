@@ -4,7 +4,6 @@ import Home from './pages/Home'
 import About from './pages/About'
 import Register from './pages/Register'
 import Login from './pages/Login'
-import OtpVerify from './pages/OtpVerify'
 import Feed from './pages/Feed'
 import Reels from './pages/Reels'
 import FoodDetail from './pages/FoodDetail'
@@ -21,7 +20,6 @@ const App = () => {
         <Route path='/about' element={<About />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/verify-otp' element={<OtpVerify />} />
         <Route path='/feed' element={<Feed />} />
         <Route path='/reels' element={<Reels />} />
         <Route path='/cart' element={<Cart />} />
