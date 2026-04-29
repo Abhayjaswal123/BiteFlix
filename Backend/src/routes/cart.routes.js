@@ -8,4 +8,4 @@ cartRouter.get("/",authMiddleware, allowRoles("user"), getCart);
 cartRouter.delete("/:foodId",authMiddleware, allowRoles("user"), removeFromCart);
 cartRouter.patch("/",authMiddleware, allowRoles("user"), updateQuantity);
 
-export default cartRouter; 
+export default cartRouter;

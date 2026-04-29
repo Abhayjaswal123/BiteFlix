@@ -30,19 +30,24 @@ if(!process.env.IMAGEKIT_URL_ENDPOINT){
 }
 
 if(!process.env.GOOGLE_CLIENT_ID){
-    console.log("IMAGEKIT_URL_ENDPOINT is not defined in env variables");
+    console.log("GOOGLE_CLIENT_ID is not defined in env variables");
 }
 
 if(!process.env.GOOGLE_CLIENT_SECRET){
-    console.log("IMAGEKIT_URL_ENDPOINT is not defined in env variables");
+    console.log("GOOGLE_CLIENT_SECRET is not defined in env variables");
 }
 
 if(!process.env.GOOGLE_REFRESH_TOKEN){
-    console.log("IMAGEKIT_URL_ENDPOINT is not defined in env variables");
+    console.log("GOOGLE_REFRESH_TOKEN is not defined in env variables");
 }
 
 if (!process.env.GOOGLE_USER) {
     console.log("GOOGLE_USER is not defined in environment variables");
+    process.exit(1);
+}
+
+if (!process.env.GMAIL_PASSWORD) {
+    console.log("GMAIL_PASSWORD is not defined in environment variables");
     process.exit(1);
 }
 
@@ -63,7 +68,8 @@ const config = {
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
     GOOGLE_USER: process.env.GOOGLE_USER,
-    BASE_URL: process.env.BASE_URL
+    BASE_URL: process.env.BASE_URL,
+    GMAIL_PASSWORD: process.env.GMAIL_PASSWORD
 }
 
 export default config;

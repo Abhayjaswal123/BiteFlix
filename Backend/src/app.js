@@ -8,7 +8,7 @@ import config from './config/config.js';
 
 const app = express();
 app.use(cors({
-    origin: config.BASE_URL || "http://localhost:5173",
+    origin: config.BASE_URL,
     credentials: true
 }));
 app.use(cookieParser())
